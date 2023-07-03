@@ -1,7 +1,8 @@
-package com.anggar.miniproj.booksalong.persistence.repository;
+package com.anggar.miniproj.booksalong.data.repository;
 
-import com.anggar.miniproj.booksalong.persistence.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.anggar.miniproj.booksalong.data.entity.Book;
 
 import java.util.List;
 

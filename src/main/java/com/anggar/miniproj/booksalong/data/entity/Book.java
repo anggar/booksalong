@@ -1,6 +1,5 @@
-package com.anggar.miniproj.booksalong.persistence.model;
+package com.anggar.miniproj.booksalong.data.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

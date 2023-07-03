@@ -1,8 +1,8 @@
 package com.anggar.miniproj.booksalong.web.controller;
 
-import com.anggar.miniproj.booksalong.persistence.model.Author;
-import com.anggar.miniproj.booksalong.persistence.repository.AuthorRepository;
-import com.anggar.miniproj.booksalong.web.exception.ItemNotFoundException;
+import com.anggar.miniproj.booksalong.data.dto.AuthorDto;
+import com.anggar.miniproj.booksalong.web.service.AuthorService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,22 +12,27 @@ import org.springframework.web.bind.annotation.*;
 public class AuthorController {
 
     @Autowired
-    private AuthorRepository authorRepository;
+    private AuthorService authorService;
 
     @GetMapping
-    public Iterable<Author> findAll() {
-        return authorRepository.findAll();
+    public AuthorDto.MultipleAuthors findAll() {
+        var authors = authorService.findAll();
+
+        return AuthorDto.MultipleAuthors.fromEntities(authors);
     }
 
     @GetMapping("/{id}")
-    public Author findOne(@PathVariable long id) {
-        return authorRepository.findById(id)
-                .orElseThrow(ItemNotFoundException::new);
+    public AuthorDto.SingleAuthor<AuthorDto> findOne(@PathVariable long id) {
+        var author = authorService.findById(id);
+
+        return AuthorDto.SingleAuthor.fromEntity(author);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Author create(@RequestBody Author author) {
-        return authorRepository.save(author);
+    public AuthorDto.SingleAuthor<AuthorDto> create(@RequestBody AuthorDto author) {
+        var savedAuthor = authorService.create(author.toEntity());
+
+        return AuthorDto.SingleAuthor.fromEntity(savedAuthor);
     }
 }

@@ -1,7 +1,7 @@
 package com.anggar.miniproj.booksalong.web.controller;
 
-import com.anggar.miniproj.booksalong.persistence.model.Book;
-import com.anggar.miniproj.booksalong.persistence.repository.BookRepository;
+import com.anggar.miniproj.booksalong.data.entity.Book;
+import com.anggar.miniproj.booksalong.data.repository.BookRepository;
 import com.anggar.miniproj.booksalong.web.exception.IdMismatchException;
 import com.anggar.miniproj.booksalong.web.exception.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

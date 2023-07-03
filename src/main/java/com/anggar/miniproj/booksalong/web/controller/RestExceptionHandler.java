@@ -1,5 +1,6 @@
 package com.anggar.miniproj.booksalong.web.controller;
 
+import com.anggar.miniproj.booksalong.data.dto.BaseResponseDto;
 import com.anggar.miniproj.booksalong.web.exception.IdMismatchException;
 import com.anggar.miniproj.booksalong.web.exception.ItemNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -17,7 +18,9 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({ItemNotFoundException.class})
     protected ResponseEntity<Object> handleNotFound(Exception ex, WebRequest request) {
-        return handleExceptionInternal(ex, "Item not found", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        var body = createErrorBodyMessage("Item not found");
+
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler({
@@ -26,6 +29,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             DataIntegrityViolationException.class,
     })
     public ResponseEntity<Object> handleBadRequest(Exception ex, WebRequest request) {
-        return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        var body = createErrorBodyMessage(ex.getMessage());
+
+        return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    private BaseResponseDto<Object> createErrorBodyMessage(String message) {
+        return BaseResponseDto.builder()
+            .success(false)
+            .data(null)
+            .error(message)
+            .build();
     }
 }

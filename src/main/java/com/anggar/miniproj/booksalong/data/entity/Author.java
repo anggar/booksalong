@@ -1,4 +1,4 @@
-package com.anggar.miniproj.booksalong.persistence.model;
+package com.anggar.miniproj.booksalong.data.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,8 +12,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Author {
+
     @Getter
-    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
