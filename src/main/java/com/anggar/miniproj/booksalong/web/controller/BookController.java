@@ -1,61 +1,36 @@
 package com.anggar.miniproj.booksalong.web.controller;
 
-import com.anggar.miniproj.booksalong.data.entity.Book;
+import com.anggar.miniproj.booksalong.data.dto.BookDto;
+import com.anggar.miniproj.booksalong.data.repository.AuthorRepository;
 import com.anggar.miniproj.booksalong.data.repository.BookRepository;
-import com.anggar.miniproj.booksalong.web.exception.IdMismatchException;
-import com.anggar.miniproj.booksalong.web.exception.ItemNotFoundException;
+import com.anggar.miniproj.booksalong.web.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/books")
 public class BookController {
 
     @Autowired
-    private BookRepository bookRepository;
+    private BookService bookService;
 
     @GetMapping
-    public Iterable<Book> findAll() {
-        return bookRepository.findAll();
+    public BookDto.MultipleBooks findAll() {
+        var books = bookService.findAll();
+        return BookDto.MultipleBooks.fromEntities(books);
     }
 
-    @GetMapping("/title/{bookTitle}")
-    public List<Book> findByTitle(@PathVariable String bookTitle) {
-        return bookRepository.findByTitle(bookTitle);
+    @GetMapping("/title")
+    public BookDto.MultipleBooks findByTitle(@RequestBody BookDto.BookTitle bookTitle) {
+        var books = bookService.findByTitle(bookTitle.title());
+        return BookDto.MultipleBooks.fromEntities(books);
     }
 
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
-    public Book findOne(@PathVariable long id) {
-        return bookRepository.findById(id)
-                .orElseThrow(ItemNotFoundException::new);
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Book create(@RequestBody Book book) {
-        return bookRepository.save(book);
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable long id) {
-        bookRepository.findById(id)
-                .orElseThrow(ItemNotFoundException::new);
-        bookRepository.deleteById(id);
-    }
-
-    @PutMapping("/{id}")
-    public Book updateBook(@RequestBody Book book, @PathVariable long id) {
-        if (book.getId() != id) {
-            throw new IdMismatchException("The book ID mismatched between request body.");
-        }
-
-        bookRepository.findById(id)
-                .orElseThrow(ItemNotFoundException::new);
-        return bookRepository.save(book);
+    public BookDto.SingleBook<BookDto> findOne(@PathVariable long id) {
+        var book = bookService.findById(id);
+        return BookDto.SingleBook.fromEntity(book);
     }
 }

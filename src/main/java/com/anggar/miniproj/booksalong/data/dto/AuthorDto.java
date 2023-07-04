@@ -5,10 +5,7 @@ import java.util.stream.Collectors;
 
 import com.anggar.miniproj.booksalong.data.entity.Author;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Builder
 public class AuthorDto {
@@ -36,11 +33,7 @@ public class AuthorDto {
         private List<AuthorDto> authors;
 
         public static MultipleAuthors fromEntities(List<Author> authors) {
-            var authorList = authors.stream().map(entity -> {
-                return AuthorDto.fromEntity(entity);
-            }).collect(Collectors.toList());
-
-            return new MultipleAuthors(authorList);
+            return new MultipleAuthors(AuthorDto.fromEntities(authors));
         }
     }
 
@@ -48,7 +41,11 @@ public class AuthorDto {
         return new Author(id, name, null);
     }
 
-    private static AuthorDto fromEntity(Author author) {
+    public static AuthorDto fromEntity(Author author) {
         return new AuthorDto(author.getId(), author.getName());
+    }
+
+    public  static List<AuthorDto> fromEntities(List<Author> authors) {
+       return authors.stream().map(AuthorDto::fromEntity).collect(Collectors.toList());
     }
 }

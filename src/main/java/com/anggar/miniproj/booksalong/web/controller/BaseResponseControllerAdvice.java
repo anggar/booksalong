@@ -1,5 +1,7 @@
 package com.anggar.miniproj.booksalong.web.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -38,5 +40,4 @@ public class BaseResponseControllerAdvice implements ResponseBodyAdvice<Object> 
         return output;
     }
     
-
 }

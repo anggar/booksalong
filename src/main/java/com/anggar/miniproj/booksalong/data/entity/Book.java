@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = "books")
@@ -35,7 +36,7 @@ public class Book implements Serializable {
     @Getter
     @Setter
     @ManyToMany(mappedBy = "books")
-    private Set<Author> authors;
+    private List<Author> authors;
 
     @Override
     public String toString() {
