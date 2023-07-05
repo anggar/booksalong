@@ -1,6 +1,8 @@
 package com.anggar.miniproj.booksalong.data.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,10 +10,11 @@ import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
-@Entity(name = "books")
+@Entity
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Book implements Serializable {
 
     @Serial
@@ -35,11 +38,11 @@ public class Book implements Serializable {
 
     @Getter
     @Setter
-    @ManyToMany(mappedBy = "books")
+    @ManyToMany
+    @JoinTable(
+        name = "author_book",
+        joinColumns = @JoinColumn(name = "author_id"),
+        inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
     private List<Author> authors;
-
-    @Override
-    public String toString() {
-        return "Book [id=" + id + ", isbn=" + ISBN + ", title=" + title + ", author=" + authors + "]";
-    }
 }

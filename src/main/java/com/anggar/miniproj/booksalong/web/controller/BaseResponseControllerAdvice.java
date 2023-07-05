@@ -1,9 +1,12 @@
 package com.anggar.miniproj.booksalong.web.controller;
 
+import java.net.URI;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -16,6 +19,8 @@ import com.anggar.miniproj.booksalong.data.dto.BaseResponseDto;
 @ControllerAdvice
 public class BaseResponseControllerAdvice implements ResponseBodyAdvice<Object> {
 
+    private final Logger logger = LoggerFactory.getLogger(BaseResponseControllerAdvice.class);
+
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
@@ -27,17 +32,36 @@ public class BaseResponseControllerAdvice implements ResponseBodyAdvice<Object> 
             Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
             ServerHttpResponse response) {
 
-        if (body instanceof BaseResponseDto) {
+        if ( body == null || body instanceof BaseResponseDto) {
             return body;
         }
 
-        final BaseResponseDto<Object> output = BaseResponseDto.builder()
+        if (body instanceof ProblemDetail) {
+            var problemDetail = (ProblemDetail) body;
+            
+           return BaseResponseDto.builder()
+                .data(new ProblemDetailResponseData(problemDetail))
+                .success(false)
+                .error(problemDetail.getTitle())
+                .build();
+        }
+
+        logger.debug(body.getClass().getName());
+
+        return BaseResponseDto.builder()
             .success(true)
             .data(body)
             .error(null)
             .build();
-
-        return output;
     }
-    
+
+    private record ProblemDetailResponseData (
+        String detail,
+        URI instance,
+        int status        
+    ) {
+        public ProblemDetailResponseData(ProblemDetail problemDetail) {
+            this(problemDetail.getDetail(), problemDetail.getInstance(), problemDetail.getStatus());
+        }
+    }
 }

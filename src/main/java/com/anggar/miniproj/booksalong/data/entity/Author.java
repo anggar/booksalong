@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.util.Set;
 
-@Entity(name = "authors")
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class Author {
@@ -25,6 +25,6 @@ public class Author {
 
     @Getter
     @Setter
-    @ManyToMany
+    @ManyToMany(mappedBy = "authors")
     private Set<Book> books;
 }

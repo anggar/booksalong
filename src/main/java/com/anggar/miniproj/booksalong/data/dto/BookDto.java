@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.anggar.miniproj.booksalong.data.entity.Book;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,10 +56,17 @@ public class BookDto {
     ) {}
 
     public record BookCreateRequest (
-        String title,
-        String ISBN,
-        List<Long> authorIds
+        @NotEmpty String title,
+        @NotEmpty String ISBN,
+        @Size(min = 1) List<Long> authorIds
     ) { }
+
+    public record BookUpdateRequest (
+        @Min(1) long id,
+        String title,
+        String ISBN
+    ) { }
+
 
     public static BookDto fromEntity(Book book) {
         return BookDto.builder()

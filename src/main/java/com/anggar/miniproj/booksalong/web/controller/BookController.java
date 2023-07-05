@@ -1,11 +1,13 @@
 package com.anggar.miniproj.booksalong.web.controller;
 
 import com.anggar.miniproj.booksalong.data.dto.BookDto;
-import com.anggar.miniproj.booksalong.data.repository.AuthorRepository;
-import com.anggar.miniproj.booksalong.data.repository.BookRepository;
+import com.anggar.miniproj.booksalong.web.exception.IdMismatchException;
 import com.anggar.miniproj.booksalong.web.service.BookService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,9 +30,31 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    @Transactional(readOnly = true)
     public BookDto.SingleBook<BookDto> findOne(@PathVariable long id) {
         var book = bookService.findById(id);
         return BookDto.SingleBook.fromEntity(book);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public BookDto.SingleBook<BookDto> create(@RequestBody @Valid BookDto.BookCreateRequest body) {
+        var book = bookService.create(body);
+        return BookDto.SingleBook.fromEntity(book);
+    }
+    
+    @PutMapping("/{id}")
+    public BookDto.SingleBook<BookDto> update(@RequestBody @Valid BookDto.BookUpdateRequest body, @PathVariable("id") long id) {
+        if (id != body.id()) {
+            throw new IdMismatchException();
+        }
+
+        var book = bookService.update(body);
+        return BookDto.SingleBook.fromEntity(book);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") long id) {
+        bookService.delete(id);
     }
 }

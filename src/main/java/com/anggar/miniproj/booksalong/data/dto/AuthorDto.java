@@ -45,7 +45,7 @@ public class AuthorDto {
         return new AuthorDto(author.getId(), author.getName());
     }
 
-    public  static List<AuthorDto> fromEntities(List<Author> authors) {
+    public static List<AuthorDto> fromEntities(List<Author> authors) {
        return authors.stream().map(AuthorDto::fromEntity).collect(Collectors.toList());
     }
 }
