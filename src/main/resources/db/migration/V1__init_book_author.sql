@@ -14,14 +14,6 @@ CREATE TABLE book (
 );
 
 CREATE TABLE author_book (
-    author_id bigint NOT NULL REFERENCES book(id),
-    book_id bigint NOT NULL REFERENCES author(id)
+    author_id bigint NOT NULL REFERENCES author(id),
+    book_id bigint NOT NULL REFERENCES book(id)
 );
-
-alter table if exists author_book
-    add constraint author_book_book_id_fk
-    foreign key (book_id) references book;
-
-alter table if exists author_book
-    add constraint author_book_author_id_fk
-    foreign key (author_id) references author;
