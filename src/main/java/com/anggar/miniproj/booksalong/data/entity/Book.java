@@ -41,8 +41,8 @@ public class Book implements Serializable {
     @ManyToMany
     @JoinTable(
         name = "author_book",
-        joinColumns = @JoinColumn(name = "author_id"),
-        inverseJoinColumns = @JoinColumn(name = "book_id")
+        joinColumns = @JoinColumn(name = "book_id"),
+        inverseJoinColumns = @JoinColumn(name = "author_id")
     )
     private List<Author> authors;
 }
