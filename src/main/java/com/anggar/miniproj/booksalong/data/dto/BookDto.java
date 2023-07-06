@@ -7,6 +7,7 @@ import com.anggar.miniproj.booksalong.data.entity.Book;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,7 +59,7 @@ public class BookDto {
     public record BookCreateRequest (
         @NotEmpty String title,
         @NotEmpty String ISBN,
-        @Size(min = 1) List<Long> authorIds
+        @NotEmpty List<Long> authorIds
     ) { }
 
     public record BookUpdateRequest (

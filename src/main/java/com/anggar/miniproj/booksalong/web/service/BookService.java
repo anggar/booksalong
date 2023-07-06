@@ -48,7 +48,7 @@ public class BookService {
 
         for (var authorId: book.authorIds()) {
             var author = authorRepository.findById(authorId);
-            if (!author.isPresent()) {
+            if (author.isEmpty()) {
                 throw new ItemNotFoundException("Author not found");
             }
             

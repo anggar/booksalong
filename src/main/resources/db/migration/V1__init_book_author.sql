@@ -4,7 +4,7 @@ CREATE TABLE author (
 );
 
 CREATE TABLE book (
-    id bigint PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     isbn character varying(255) NOT NULL UNIQUE,
     title character varying(255) NOT NULL
 );
