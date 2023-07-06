@@ -1,5 +1,6 @@
 package com.anggar.miniproj.booksalong.data.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,15 +15,31 @@ public class AuthorDto {
     private long id;
 
     @Getter
-    @Setter
     private String name;
+
+    public record AuthorDataComplete (
+        long id,
+        String name,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+    ) {
+        public AuthorDataComplete(Author author) {
+            this(author.getId(), author.getName(), author.getCreatedAt(), author.getUpdatedAt());
+        }
+     }
+
 
     @Getter
     @AllArgsConstructor
     public static class SingleAuthor<T> {
         private T author;
 
-        public static SingleAuthor<AuthorDto> fromEntity(Author author) {
+        public static SingleAuthor fromEntity(Author author, Class cls) {
+            if (cls == AuthorDataComplete.class) {
+                var data = new AuthorDataComplete(author);
+                return new SingleAuthor<>(data);
+            }
+
             return new SingleAuthor<>(AuthorDto.fromEntity(author));
         }
     }
@@ -38,11 +55,16 @@ public class AuthorDto {
     }
 
     public Author toEntity() {
-        return new Author(id, name, null);
+        var author = new Author(name, null);
+        author.setId(this.id);
+        return author;
     }
 
     public static AuthorDto fromEntity(Author author) {
-        return new AuthorDto(author.getId(), author.getName());
+        return AuthorDto.builder()
+            .id(author.getId())
+            .name(author.getName())
+            .build();
     }
 
     public static List<AuthorDto> fromEntities(List<Author> authors) {

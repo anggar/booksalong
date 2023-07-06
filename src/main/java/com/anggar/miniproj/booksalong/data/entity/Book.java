@@ -15,16 +15,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Book implements Serializable {
+public class Book extends BaseEntity implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    @Getter
-    @Setter
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
 
     @Getter
     @Setter

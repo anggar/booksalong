@@ -25,7 +25,7 @@ public class AuthorController {
     public AuthorDto.SingleAuthor<AuthorDto> findOne(@PathVariable long id) {
         var author = authorService.findById(id);
 
-        return AuthorDto.SingleAuthor.fromEntity(author);
+        return AuthorDto.SingleAuthor.fromEntity(author, AuthorDto.AuthorDataComplete.class);
     }
 
     @PostMapping
@@ -33,6 +33,6 @@ public class AuthorController {
     public AuthorDto.SingleAuthor<AuthorDto> create(@RequestBody AuthorDto author) {
         var savedAuthor = authorService.create(author.toEntity());
 
-        return AuthorDto.SingleAuthor.fromEntity(savedAuthor);
+        return AuthorDto.SingleAuthor.fromEntity(savedAuthor, AuthorDto.AuthorDataComplete.class);
     }
 }

@@ -11,16 +11,11 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Author {
-
-    @Getter
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Author extends BaseEntity {
 
     @Getter
     @Setter
-    @Column
+    @Column(nullable = false)
     private String name;
 
     @Getter

@@ -1,5 +1,6 @@
 package com.anggar.miniproj.booksalong.data.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -7,12 +8,9 @@ import com.anggar.miniproj.booksalong.data.entity.Book;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Builder
 public class BookDto {
@@ -21,16 +19,19 @@ public class BookDto {
     private long id;
 
     @Getter
-    @Setter
     private String title;
 
     @Getter
-    @Setter
     private String ISBN;
 
     @Getter
-    @Setter
     private List<AuthorDto> authors;
+
+    @Getter
+    private LocalDateTime createdAt;
+
+    @Getter
+    private LocalDateTime updatedAt;
 
     @AllArgsConstructor
     public static class SingleBook<T> {
@@ -74,6 +75,8 @@ public class BookDto {
                 .id(book.getId())
                 .title(book.getTitle())
                 .ISBN(book.getISBN())
+                .createdAt(book.getCreatedAt())
+                .updatedAt(book.getUpdatedAt())
                 .authors(AuthorDto.fromEntities(book.getAuthors()))
                 .build();
     }
