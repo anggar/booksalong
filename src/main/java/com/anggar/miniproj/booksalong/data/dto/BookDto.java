@@ -9,36 +9,32 @@ import com.anggar.miniproj.booksalong.data.entity.Book;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
-@Builder
-public class BookDto {
-    
-    @Getter
-    private long id;
-
-    @Getter
-    private String title;
-
-    @Getter
-    private String ISBN;
-
-    @Getter
-    private List<AuthorDto> authors;
-
-    @Getter
-    private LocalDateTime createdAt;
-
-    @Getter
-    private LocalDateTime updatedAt;
+public abstract class BookDto {
+    public sealed interface Data permits Data.Complete {
+        record Complete (
+                long id,
+                String title,
+                String ISBN,
+                List<AuthorDto.Data> authors,
+                LocalDateTime createdAt,
+                LocalDateTime updatedAt
+        ) implements Data {
+            public Complete(Book book) {
+                this(book.getId(), book.getTitle(), book.getISBN(),
+                        AuthorDto.fromEntities(book.getAuthors()),
+                        book.getCreatedAt(), book.getUpdatedAt());
+            }
+        }
+    }
 
     @AllArgsConstructor
-    public static class SingleBook<T> {
+    public static class SingleBook<T extends Data> {
         @Getter
         private T book;
 
-        public static SingleBook<BookDto> fromEntity(Book book) {
+        public static SingleBook<? extends Data> fromEntity(Book book) {
             return new SingleBook<>(BookDto.fromEntity(book));
         }
     }
@@ -46,7 +42,7 @@ public class BookDto {
     @AllArgsConstructor
     public static class MultipleBooks {
         @Getter
-        private List<BookDto> books;
+        private List<? extends Data> books;
 
         public static MultipleBooks fromEntities(List<Book> books) {
             return new MultipleBooks(BookDto.fromEntities(books));
@@ -70,18 +66,11 @@ public class BookDto {
     ) { }
 
 
-    public static BookDto fromEntity(Book book) {
-        return BookDto.builder()
-                .id(book.getId())
-                .title(book.getTitle())
-                .ISBN(book.getISBN())
-                .createdAt(book.getCreatedAt())
-                .updatedAt(book.getUpdatedAt())
-                .authors(AuthorDto.fromEntities(book.getAuthors()))
-                .build();
+    public static Data fromEntity(Book book) {
+        return new Data.Complete(book);
     }
 
-    public static List<BookDto> fromEntities(List<Book> books) {
-        return books.stream().map(BookDto::fromEntity).collect(Collectors.toList());
+    public static List<Data> fromEntities(List<Book> books) {
+        return books.stream().map(Data.Complete::new).collect(Collectors.toList());
     }
 }

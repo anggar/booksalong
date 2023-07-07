@@ -6,68 +6,66 @@ import java.util.stream.Collectors;
 
 import com.anggar.miniproj.booksalong.data.entity.Author;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
-@Builder
-public class AuthorDto {
-
-    @Getter
-    private long id;
-
-    @Getter
-    private String name;
-
-    public record AuthorDataComplete (
-        long id,
-        String name,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt
-    ) {
-        public AuthorDataComplete(Author author) {
-            this(author.getId(), author.getName(), author.getCreatedAt(), author.getUpdatedAt());
+public abstract class AuthorDto {
+     public sealed interface Data permits Data.Compact, Data.Complete {
+         record Compact (long id, String name) implements Data {
+             public Compact(Author author) {
+                 this(author.getId(), author.getName());
+             }
+         }
+         record Complete (
+                 long id, String name, LocalDateTime createdAt, LocalDateTime updatedAt
+         ) implements Data {
+            public Complete(Author author) {
+                this(author.getId(), author.getName(), author.getCreatedAt(), author.getUpdatedAt());
+            }
         }
      }
 
-
-    @Getter
     @AllArgsConstructor
-    public static class SingleAuthor<T> {
+    public static class SingleAuthor<T extends Data> {
+        @Getter
         private T author;
 
-        public static SingleAuthor fromEntity(Author author, Class cls) {
-            if (cls == AuthorDataComplete.class) {
-                var data = new AuthorDataComplete(author);
-                return new SingleAuthor<>(data);
-            }
-
-            return new SingleAuthor<>(AuthorDto.fromEntity(author));
+        public static <K extends Data> SingleAuthor<? extends Data> fromEntity(Author author, Class<K> cls) {
+            return new SingleAuthor<>(AuthorDto.fromEntity(author, cls));
         }
     }
 
-    @Getter
     @AllArgsConstructor
     public static class MultipleAuthors {
-        private List<AuthorDto> authors;
+
+        @Getter
+        private List<? extends Data> authors;
 
         public static MultipleAuthors fromEntities(List<Author> authors) {
             return new MultipleAuthors(AuthorDto.fromEntities(authors));
         }
     }
 
-    public Author toEntity() {
-        var author = new Author(name, null);
-        author.setId(this.id);
-        return author;
+    public static Data fromEntity(Author author, Class<? extends Data> cls) {
+        if (cls == Data.Complete.class) {
+            return new Data.Complete(author);
+        }
+
+        return new Data.Compact(author);
     }
 
-    public static AuthorDto fromEntity(Author author) {
-        return AuthorDto.builder()
-            .id(author.getId())
-            .name(author.getName())
-            .build();
+    public static List<Data> fromEntities(List<Author> authors) {
+       return authors.stream().map(Data.Compact::new).collect(Collectors.toList());
     }
 
-    public static List<AuthorDto> fromEntities(List<Author> authors) {
-       return authors.stream().map(AuthorDto::fromEntity).collect(Collectors.toList());
+    public record AuthorCreateRequest (
+            @NotEmpty String name
+    ) {
+        public Author toEntity() {
+            return Author.builder()
+                    .name(this.name)
+                    .build();
+        }
     }
+
 }

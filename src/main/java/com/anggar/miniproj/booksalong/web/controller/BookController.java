@@ -30,20 +30,20 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public BookDto.SingleBook<BookDto> findOne(@PathVariable long id) {
+    public BookDto.SingleBook<? extends BookDto.Data> findOne(@PathVariable long id) {
         var book = bookService.findById(id);
         return BookDto.SingleBook.fromEntity(book);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDto.SingleBook<BookDto> create(@RequestBody @Valid BookDto.BookCreateRequest body) {
+    public BookDto.SingleBook<? extends BookDto.Data> create(@RequestBody @Valid BookDto.BookCreateRequest body) {
         var book = bookService.create(body);
         return BookDto.SingleBook.fromEntity(book);
     }
     
     @PutMapping("/{id}")
-    public BookDto.SingleBook<BookDto> update(@RequestBody @Valid BookDto.BookUpdateRequest body, @PathVariable("id") long id) {
+    public BookDto.SingleBook<? extends BookDto.Data> update(@RequestBody @Valid BookDto.BookUpdateRequest body, @PathVariable("id") long id) {
         if (id != body.id()) {
             throw new IdMismatchException();
         }

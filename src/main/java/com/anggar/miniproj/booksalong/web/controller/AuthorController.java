@@ -22,17 +22,17 @@ public class AuthorController {
     }
 
     @GetMapping("/{id}")
-    public AuthorDto.SingleAuthor<AuthorDto> findOne(@PathVariable long id) {
+    public AuthorDto.SingleAuthor<? extends AuthorDto.Data> findOne(@PathVariable long id) {
         var author = authorService.findById(id);
 
-        return AuthorDto.SingleAuthor.fromEntity(author, AuthorDto.AuthorDataComplete.class);
+        return AuthorDto.SingleAuthor.fromEntity(author, AuthorDto.Data.Complete.class);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthorDto.SingleAuthor<AuthorDto> create(@RequestBody AuthorDto author) {
+    public AuthorDto.SingleAuthor<? extends AuthorDto.Data> create(@RequestBody AuthorDto.AuthorCreateRequest author) {
         var savedAuthor = authorService.create(author.toEntity());
 
-        return AuthorDto.SingleAuthor.fromEntity(savedAuthor, AuthorDto.AuthorDataComplete.class);
+        return AuthorDto.SingleAuthor.fromEntity(savedAuthor, AuthorDto.Data.Complete.class);
     }
 }
