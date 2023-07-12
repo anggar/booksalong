@@ -11,8 +11,8 @@ import io.jsonwebtoken.security.Keys;
 
 public class JwtUtils {
 
-    private final long validMs;
     private final Key key;
+    private final long validMs;
 
     public JwtUtils(String signKey, long validMs) {
         this.validMs = validMs;

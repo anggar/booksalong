@@ -2,6 +2,7 @@ package com.anggar.miniproj.booksalong.data.dto;
 
 import com.anggar.miniproj.booksalong.data.entity.User;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,6 +47,14 @@ public abstract class UserDto {
             @NotEmpty String password
     ) {
     }
+
+    public record UserUpdateRequest(
+            @NotNull Long id,
+            String username,
+            String email,
+            String password,
+            String bio
+    ) {}
 
     public record SingleUserWithToken (
         Data.CompleteNoPassword user,

@@ -1,13 +1,12 @@
 package com.anggar.miniproj.booksalong.security;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public record AuthUserDetails(@Getter Long id, @Getter String email) implements UserDetails {
+public record AuthUserDetails(Long id, String email) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
