@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/books")
-public class BookController {
+public class BooksController {
 
     @Autowired
     private BookService bookService;
 
-    @GetMapping
+    @GetMapping("/")
     public BookDto.MultipleBooks findAll() {
         var books = bookService.findAll();
         return BookDto.MultipleBooks.fromEntities(books);
@@ -29,21 +29,24 @@ public class BookController {
         return BookDto.MultipleBooks.fromEntities(books);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/")
     public BookDto.SingleBook<? extends BookDto.Data> findOne(@PathVariable long id) {
         var book = bookService.findById(id);
         return BookDto.SingleBook.fromEntity(book);
     }
 
-    @PostMapping
+    @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     public BookDto.SingleBook<? extends BookDto.Data> create(@RequestBody @Valid BookDto.BookCreateRequest body) {
         var book = bookService.create(body);
         return BookDto.SingleBook.fromEntity(book);
     }
     
-    @PutMapping("/{id}")
-    public BookDto.SingleBook<? extends BookDto.Data> update(@RequestBody @Valid BookDto.BookUpdateRequest body, @PathVariable("id") long id) {
+    @PutMapping("/{id}/")
+    public BookDto.SingleBook<? extends BookDto.Data> update(
+            @RequestBody @Valid BookDto.BookUpdateRequest body,
+            @PathVariable("id") long id
+    ) {
         if (id != body.id()) {
             throw new IdMismatchException();
         }
@@ -52,7 +55,7 @@ public class BookController {
         return BookDto.SingleBook.fromEntity(book);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}/")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") long id) {
         bookService.delete(id);

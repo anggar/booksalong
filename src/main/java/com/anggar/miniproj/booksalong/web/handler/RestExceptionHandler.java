@@ -1,6 +1,6 @@
-package com.anggar.miniproj.booksalong.web.controller;
+package com.anggar.miniproj.booksalong.web.handler;
 
-import com.anggar.miniproj.booksalong.data.dto.BaseResponseDto;
+import com.anggar.miniproj.booksalong.web.exception.DuplicateDataException;
 import com.anggar.miniproj.booksalong.web.exception.IdMismatchException;
 import com.anggar.miniproj.booksalong.web.exception.ItemNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import static com.anggar.miniproj.booksalong.web.handler.ResponseBuilder.createErrorBodyMessage;
+
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -30,6 +33,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({
             IdMismatchException.class,
+            DuplicateDataException.class,
             ConstraintViolationException.class,
             DataIntegrityViolationException.class,
     })
@@ -37,13 +41,5 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         var body = createErrorBodyMessage(ex.getMessage());
 
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-    }
-
-    private BaseResponseDto<Object> createErrorBodyMessage(String message) {
-        return BaseResponseDto.builder()
-            .success(false)
-            .data(null)
-            .error(message)
-            .build();
     }
 }

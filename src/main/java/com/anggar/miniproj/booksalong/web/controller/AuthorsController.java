@@ -9,26 +9,26 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/authors")
-public class AuthorController {
+public class AuthorsController {
 
     @Autowired
     private AuthorService authorService;
 
-    @GetMapping
+    @GetMapping("/")
     public AuthorDto.MultipleAuthors findAll() {
         var authors = authorService.findAll();
 
         return AuthorDto.MultipleAuthors.fromEntities(authors);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}/")
     public AuthorDto.SingleAuthor<? extends AuthorDto.Data> findOne(@PathVariable long id) {
         var author = authorService.findById(id);
 
         return AuthorDto.SingleAuthor.fromEntity(author, AuthorDto.Data.Complete.class);
     }
 
-    @PostMapping
+    @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     public AuthorDto.SingleAuthor<? extends AuthorDto.Data> create(@RequestBody AuthorDto.AuthorCreateRequest author) {
         var savedAuthor = authorService.create(author.toEntity());

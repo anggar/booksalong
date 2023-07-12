@@ -22,31 +22,29 @@ public class BaseResponseControllerAdvice implements ResponseBodyAdvice<Object> 
     private final Logger logger = LoggerFactory.getLogger(BaseResponseControllerAdvice.class);
 
     @Override
-    public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+    public boolean supports(@Nullable MethodParameter returnType,
+            @Nullable Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
     }
 
     @Override
     @Nullable
-    public Object beforeBodyWrite(@Nullable Object body, MethodParameter returnType, MediaType selectedContentType,
-            Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
-            ServerHttpResponse response) {
-
+    public Object beforeBodyWrite(@Nullable Object body, @Nullable MethodParameter returnType,
+            @Nullable MediaType selectedContentType, @Nullable Class<? extends HttpMessageConverter<?>> selectedConverterType,
+            @Nullable ServerHttpRequest request, @Nullable ServerHttpResponse response) {
         if ( body == null || body instanceof BaseResponseDto) {
             return body;
         }
 
-        if (body instanceof ProblemDetail) {
-            var problemDetail = (ProblemDetail) body;
-            
-           return BaseResponseDto.builder()
+        if (body instanceof ProblemDetail problemDetail) {
+            return BaseResponseDto.builder()
                 .data(new ProblemDetailResponseData(problemDetail))
                 .success(false)
                 .error(problemDetail.getTitle())
                 .build();
         }
 
-        logger.debug(body.getClass().getName());
+        logger.info(body.getClass().getName());
 
         return BaseResponseDto.builder()
             .success(true)

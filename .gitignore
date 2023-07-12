@@ -34,3 +34,6 @@ build/
 
 ### Flyway ###
 flyway.conf
+
+### Env ###
+.env
