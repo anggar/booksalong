@@ -30,7 +30,7 @@ public class BookService {
     @Transactional(readOnly = true)
     public Book findById(long id) {
         return bookRepository.findById(id)
-                .orElseThrow(ItemNotFoundException::new);
+                .orElseThrow(() -> new ItemNotFoundException(Book.class));
     }
 
     @Transactional(readOnly = true)
@@ -47,12 +47,10 @@ public class BookService {
         var authors = new ArrayList<Author>();
 
         for (var authorId: book.authorIds()) {
-            var author = authorRepository.findById(authorId);
-            if (author.isEmpty()) {
-                throw new ItemNotFoundException("Author not found");
-            }
-            
-            authors.add(author.get());
+            var author = authorRepository.findById(authorId)
+                    .orElseThrow(() -> new ItemNotFoundException(Author.class));
+
+            authors.add(author);
         }
 
         bookBuilder.authors(authors);
@@ -63,17 +61,22 @@ public class BookService {
     @Transactional
     public Book update(BookDto.BookUpdateRequest bookUpdate) {
         Book savedBook = bookRepository.findById(bookUpdate.id())
-            .orElseThrow(ItemNotFoundException::new);
+            .orElseThrow(() -> new ItemNotFoundException(Book.class));
 
-        savedBook.setTitle(bookUpdate.title().isEmpty() ? savedBook.getTitle() : bookUpdate.title());
-        savedBook.setISBN(bookUpdate.ISBN().isEmpty() ? savedBook.getISBN() : bookUpdate.ISBN());
+        if (!bookUpdate.title().isEmpty()) {
+            savedBook.setTitle(bookUpdate.title());
+        }
+
+        if (!bookUpdate.ISBN().isEmpty()) {
+            savedBook.setISBN(bookUpdate.ISBN());
+        }
 
         return bookRepository.save(savedBook);
     }
 
     public void delete(long id) {
         bookRepository.findById(id)
-            .orElseThrow(ItemNotFoundException::new);
+            .orElseThrow(() -> new ItemNotFoundException(Book.class));
         bookRepository.deleteById(id);
     }
 }

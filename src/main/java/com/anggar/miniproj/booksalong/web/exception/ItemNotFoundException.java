@@ -1,20 +1,19 @@
 package com.anggar.miniproj.booksalong.web.exception;
 
-public class ItemNotFoundException extends RuntimeException {
+import com.anggar.miniproj.booksalong.data.entity.BaseEntity;
+import lombok.Getter;
 
-    public ItemNotFoundException() {
-        super();
-    }
+public class ItemNotFoundException extends RuntimeException implements CustomDataError {
 
-    public ItemNotFoundException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
+    private record Data (
+            String entity
+    ) {}
 
-    public ItemNotFoundException(final String message) {
-        super(message);
-    }
+    @Getter
+    private final Data customData;
 
-    public ItemNotFoundException(final Throwable cause) {
-        super(cause);
+    public ItemNotFoundException(final Class<? extends BaseEntity> cls) {
+        super(cls.getSimpleName() + " not found.");
+        this.customData = new Data(cls.getSimpleName());
     }
 }

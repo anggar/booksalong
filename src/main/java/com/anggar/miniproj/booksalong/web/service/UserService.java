@@ -5,6 +5,7 @@ import com.anggar.miniproj.booksalong.data.entity.User;
 import com.anggar.miniproj.booksalong.data.repository.UserRepository;
 import com.anggar.miniproj.booksalong.security.AuthUserDetails;
 import com.anggar.miniproj.booksalong.web.exception.DuplicateDataException;
+import com.anggar.miniproj.booksalong.web.exception.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,17 +23,15 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User currentUser(AuthUserDetails authUserDetails) {
-        var user = userRepository.findById(authUserDetails.id())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return user;
+        return userRepository.findById(authUserDetails.id())
+                .orElseThrow(() -> new ItemNotFoundException(User.class));
     }
 
     @Transactional
     public User register(UserDto.UserRegistrationRequest body) {
         userRepository.findByEmailOrUsername(body.email(), body.username())
                 .stream().findAny().ifPresent(entity -> {
-                    throw new DuplicateDataException("Duplicated data found");
+                    throw new DuplicateDataException(User.class);
         });
 
         var user = body.toEntity(this.passwordEncoder);
@@ -41,30 +40,20 @@ public class UserService {
 
     @Transactional
     public User login(UserDto.UserLoginRequest body) {
-        var savedUser = userRepository.findByEmail(body.email());
-
-        if (savedUser.isPresent()) {
-            var user = savedUser.get();
-            if (passwordEncoder.matches(body.password(), user.getPassword())) {
-                return savedUser.get();
-            } else {
-//                TODO: create general AppException
-                throw new RuntimeException("Wrong password or email");
-            }
-        } else {
-            throw new UsernameNotFoundException("Wrong password or email");
-        }
+        return userRepository.findByEmail(body.email())
+                .filter(user -> passwordEncoder.matches(body.password(), user.getPassword()))
+                .orElseThrow(() -> new UsernameNotFoundException("Wrong password or email."));
     }
 
     @Transactional
     public User update(UserDto.UserUpdateRequest userUpdate) {
         var savedUser = userRepository.findById(userUpdate.id())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ItemNotFoundException(User.class));
 
         if (userUpdate.email() != null && !userUpdate.email().equals(savedUser.getEmail())) {
             userRepository.findByEmail(userUpdate.email())
                     .ifPresent(found -> {
-                        throw new DuplicateDataException();
+                        throw new DuplicateDataException(User.class, "email");
                     });
             savedUser.setEmail(userUpdate.email());
         }
@@ -72,7 +61,7 @@ public class UserService {
         if (userUpdate.username() != null && !userUpdate.username().equals(savedUser.getUsername())) {
             userRepository.findByUsername(userUpdate.username())
                     .ifPresent(found -> {
-                        throw new DuplicateDataException();
+                        throw new DuplicateDataException(User.class, "username");
                     });
             savedUser.setUsername(userUpdate.username());
         }

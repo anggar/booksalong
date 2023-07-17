@@ -1,7 +1,6 @@
 package com.anggar.miniproj.booksalong.config;
 
 import com.anggar.miniproj.booksalong.security.JwtAuthFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

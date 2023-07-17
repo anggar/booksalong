@@ -25,6 +25,6 @@ public class AuthorService {
 
     public Author findById(long id) {
         return authorRepository.findById(id)
-            .orElseThrow(ItemNotFoundException::new);
+            .orElseThrow(() -> new ItemNotFoundException(Author.class));
     }
 }

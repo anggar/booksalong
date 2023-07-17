@@ -1,20 +1,27 @@
 package com.anggar.miniproj.booksalong.web.exception;
 
-public class DuplicateDataException extends RuntimeException {
+import com.anggar.miniproj.booksalong.data.entity.BaseEntity;
+import lombok.Getter;
 
-    public DuplicateDataException() {
-        super();
+public final class DuplicateDataException extends BaseBadDataException implements CustomDataError {
+
+    private static final String GENERAL_MSG = "Duplicated data found.";
+
+    private record Data (
+            String entity,
+            String field
+    ) { }
+
+    @Getter
+    private final Data customData;
+
+    public DuplicateDataException(Class<? extends BaseEntity> cls) {
+        super(GENERAL_MSG);
+        this.customData = new Data(cls.getSimpleName(), null);
     }
 
-    public DuplicateDataException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    public DuplicateDataException(final String message) {
-        super(message);
-    }
-
-    public DuplicateDataException(final Throwable cause) {
-        super(cause);
+    public DuplicateDataException(Class<? extends BaseEntity> cls, String field) {
+        super(GENERAL_MSG);
+        this.customData = new Data(cls.getSimpleName(), field);
     }
 }
