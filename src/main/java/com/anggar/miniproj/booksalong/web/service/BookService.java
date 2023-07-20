@@ -8,14 +8,21 @@ import com.anggar.miniproj.booksalong.data.repository.BookRepository;
 import com.anggar.miniproj.booksalong.web.exception.ItemNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class BookService {
+
+    @Value("${app.upload-directory}")
+    private String UPLOAD_PATH;
 
     @Autowired
     private BookRepository bookRepository;
@@ -60,7 +67,7 @@ public class BookService {
 
     @Transactional
     public Book update(BookDto.BookUpdateRequest bookUpdate) {
-        Book savedBook = bookRepository.findById(bookUpdate.id())
+        var savedBook = bookRepository.findById(bookUpdate.id())
             .orElseThrow(() -> new ItemNotFoundException(Book.class));
 
         if (!bookUpdate.title().isEmpty()) {
@@ -78,5 +85,17 @@ public class BookService {
         bookRepository.findById(id)
             .orElseThrow(() -> new ItemNotFoundException(Book.class));
         bookRepository.deleteById(id);
+    }
+
+    public Book uploadCoverImage(long id, MultipartFile file) throws IOException {
+        var savedBook = bookRepository.findById(id)
+                .orElseThrow(() -> new ItemNotFoundException(Book.class));
+
+        var filename = file.getOriginalFilename();
+
+        file.transferTo(new File(UPLOAD_PATH + filename));
+        savedBook.setCoverImage(filename);
+
+        return bookRepository.save(savedBook);
     }
 }

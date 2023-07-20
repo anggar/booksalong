@@ -9,6 +9,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/books")
@@ -59,5 +62,15 @@ public class BooksController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable("id") long id) {
         bookService.delete(id);
+    }
+
+    @PutMapping("/{id}/cover")
+    public BookDto.SingleBook<? extends BookDto.Data> updateCover(
+            @PathVariable("id") long id,
+            @RequestParam MultipartFile file
+    ) throws IOException {
+        var book = bookService.uploadCoverImage(id, file);
+
+        return BookDto.SingleBook.fromEntity(book);
     }
 }

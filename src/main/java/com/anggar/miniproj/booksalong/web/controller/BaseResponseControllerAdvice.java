@@ -1,6 +1,7 @@
 package com.anggar.miniproj.booksalong.web.controller;
 
 import java.net.URI;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,13 +45,26 @@ public class BaseResponseControllerAdvice implements ResponseBodyAdvice<Object> 
                 .build();
         }
 
+        if (body instanceof HashMap<?,?> && ((HashMap<?, ?>) body).containsKey("error")) {
+            var errorMessage = (String) ((HashMap<?, ?>) body).get("error");
+            return BaseResponseDto.builder()
+                    .data(body)
+                    .success(false)
+                    .error(errorMessage)
+                    .build();
+        }
+
         logger.info(body.getClass().getName());
 
+        return getBaseResponseDto(body);
+    }
+
+    private static BaseResponseDto<Object> getBaseResponseDto(Object body) {
         return BaseResponseDto.builder()
-            .success(true)
-            .data(body)
-            .error(null)
-            .build();
+                .success(true)
+                .data(body)
+                .error(null)
+                .build();
     }
 
     private record ProblemDetailResponseData (

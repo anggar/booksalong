@@ -32,6 +32,11 @@ public class Book extends BaseEntity implements Serializable {
 
     @Getter
     @Setter
+    @Column
+    private String coverImage;
+
+    @Getter
+    @Setter
     @ManyToMany
     @JoinTable(
         name = "author_book",

@@ -17,12 +17,14 @@ public abstract class BookDto {
                 long id,
                 String title,
                 String ISBN,
+                String coverImage,
                 List<AuthorDto.Data> authors,
                 LocalDateTime createdAt,
                 LocalDateTime updatedAt
         ) implements Data {
             public Complete(Book book) {
                 this(book.getId(), book.getTitle(), book.getISBN(),
+                        book.getCoverImage(),
                         AuthorDto.fromEntities(book.getAuthors()),
                         book.getCreatedAt(), book.getUpdatedAt());
             }
