@@ -87,11 +87,11 @@ public class BookService {
         bookRepository.deleteById(id);
     }
 
-    public Book uploadCoverImage(long id, MultipartFile file) throws IOException {
+    public Book uploadCoverImage(Long id, MultipartFile file) throws IOException {
         var savedBook = bookRepository.findById(id)
                 .orElseThrow(() -> new ItemNotFoundException(Book.class));
 
-        var filename = file.getOriginalFilename();
+        var filename = id.toString() + "-" + file.getOriginalFilename();
 
         file.transferTo(new File(UPLOAD_PATH + filename));
         savedBook.setCoverImage(filename);
