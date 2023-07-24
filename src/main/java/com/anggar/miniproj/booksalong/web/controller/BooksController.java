@@ -73,4 +73,5 @@ public class BooksController {
 
         return BookDto.SingleBook.fromEntity(book);
     }
+
 }

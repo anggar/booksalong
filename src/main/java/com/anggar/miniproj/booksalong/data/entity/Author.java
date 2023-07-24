@@ -9,7 +9,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Author extends BaseEntity {
+public class Author extends BaseSingleEntity {
 
     @Getter
     @Setter

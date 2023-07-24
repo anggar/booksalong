@@ -1,0 +1,1 @@
+ALTER TABLE "tracker" ADD COLUMN state VARCHAR(255);

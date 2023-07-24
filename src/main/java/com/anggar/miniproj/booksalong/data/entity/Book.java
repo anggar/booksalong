@@ -15,10 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Book extends BaseEntity implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class Book extends BaseSingleEntity {
 
     @Getter
     @Setter
@@ -37,6 +34,16 @@ public class Book extends BaseEntity implements Serializable {
 
     @Getter
     @Setter
+    @Column
+    private String description;
+
+    @Getter
+    @Setter
+    @Column
+    private Long pageNumbers;
+
+    @Getter
+    @Setter
     @ManyToMany
     @JoinTable(
         name = "author_book",
@@ -44,4 +51,9 @@ public class Book extends BaseEntity implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "author_id")
     )
     private List<Author> authors;
+
+    @Getter
+    @Setter
+    @OneToMany(mappedBy = "book")
+    private List<Tracker> bookTrackers;
 }

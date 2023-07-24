@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookService {
@@ -49,7 +50,9 @@ public class BookService {
     public Book create(BookDto.BookCreateRequest book) {
         var bookBuilder = Book.builder()
             .title(book.title())
-            .ISBN(book.ISBN());
+            .ISBN(book.ISBN())
+            .pageNumbers(book.pageNumbers())
+            .description(book.description());
 
         var authors = new ArrayList<Author>();
 
@@ -70,12 +73,20 @@ public class BookService {
         var savedBook = bookRepository.findById(bookUpdate.id())
             .orElseThrow(() -> new ItemNotFoundException(Book.class));
 
-        if (!bookUpdate.title().isEmpty()) {
+        if (Optional.ofNullable(bookUpdate.title()).isPresent()) {
             savedBook.setTitle(bookUpdate.title());
         }
 
-        if (!bookUpdate.ISBN().isEmpty()) {
+        if (Optional.ofNullable(bookUpdate.ISBN()).isPresent()) {
             savedBook.setISBN(bookUpdate.ISBN());
+        }
+
+        if (Optional.ofNullable(bookUpdate.pageNumbers()).isPresent()) {
+            savedBook.setPageNumbers(bookUpdate.pageNumbers());
+        }
+
+        if (Optional.ofNullable(bookUpdate.description()).isPresent()) {
+            savedBook.setDescription(bookUpdate.description());
         }
 
         return bookRepository.save(savedBook);

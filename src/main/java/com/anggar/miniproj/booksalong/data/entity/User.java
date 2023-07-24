@@ -1,16 +1,16 @@
 package com.anggar.miniproj.booksalong.data.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user", schema = "public")
-public class User extends BaseEntity {
+public class User extends BaseSingleEntity {
 
     @Getter
     @Setter
@@ -31,4 +31,9 @@ public class User extends BaseEntity {
     @Setter
     @Column
     private String bio;
+
+    @Getter
+    @Setter
+    @OneToMany(mappedBy = "user")
+    private List<Tracker> bookTrackers;
 }
