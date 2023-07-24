@@ -32,6 +32,12 @@ public class BooksController {
         return BookDto.MultipleBooks.fromEntities(books);
     }
 
+    @GetMapping("/search")
+    public BookDto.MultipleBooks searchByTitle(@RequestParam String title) {
+        var books = bookService.searchByTitle(title);
+        return BookDto.MultipleBooks.fromEntities(books);
+    }
+
     @GetMapping("/{id}/")
     public BookDto.SingleBook<? extends BookDto.Data> findOne(@PathVariable long id) {
         var book = bookService.findById(id);
@@ -73,5 +79,4 @@ public class BooksController {
 
         return BookDto.SingleBook.fromEntity(book);
     }
-
 }

@@ -46,6 +46,11 @@ public class BookService {
         return bookRepository.findByTitle(bookTitle);
     }
 
+    @Transactional(readOnly = true)
+    public List<Book> searchByTitle(String bookTitle) {
+        return bookRepository.searchByTitleContainingIgnoreCase(bookTitle);
+    }
+
     @Transactional
     public Book create(BookDto.BookCreateRequest book) {
         var bookBuilder = Book.builder()
