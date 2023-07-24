@@ -22,10 +22,10 @@ public class AuthorsController {
     }
 
     @GetMapping("/{id}/")
-    public AuthorDto.SingleAuthor<? extends AuthorDto.Data> findOne(@PathVariable long id) {
+    public AuthorDto.SingleAuthorWithBooks<? extends AuthorDto.Data> findOne(@PathVariable long id) {
         var author = authorService.findById(id);
 
-        return AuthorDto.SingleAuthor.fromEntity(author, AuthorDto.Data.Complete.class);
+        return AuthorDto.SingleAuthorWithBooks.fromEntity(author, author.getBooks(),AuthorDto.Data.Complete.class);
     }
 
     @PostMapping("/")

@@ -6,11 +6,12 @@ import java.util.stream.Collectors;
 
 import com.anggar.miniproj.booksalong.data.entity.Author;
 
+import com.anggar.miniproj.booksalong.data.entity.Book;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 public abstract class AuthorDto {
-     public sealed interface Data permits Data.Compact, Data.Complete {
+     public sealed interface Data permits Data.Compact, Data.Complete, Data.CompleteWithBook {
          record Compact (long id, String name) implements Data {
              public Compact(Author author) {
                  this(author.getId(), author.getName());
@@ -19,8 +20,17 @@ public abstract class AuthorDto {
          record Complete (
                  long id, String name, LocalDateTime createdAt, LocalDateTime updatedAt
          ) implements Data {
-            public Complete(Author author) {
-                this(author.getId(), author.getName(), author.getCreatedAt(), author.getUpdatedAt());
+             public Complete(Author author) {
+                 this(author.getId(), author.getName(), author.getCreatedAt(), author.getUpdatedAt());
+             }
+         }
+         record CompleteWithBook (
+                 long id, String name, LocalDateTime createdAt, LocalDateTime updatedAt,
+                 List<BookDto.Data> books
+         ) implements Data {
+            public CompleteWithBook(Author author) {
+                this(author.getId(), author.getName(), author.getCreatedAt(), author.getUpdatedAt(),
+                        BookDto.fromEntities(author.getBooks(), BookDto.Data.Compact.class));
             }
         }
      }
@@ -32,6 +42,19 @@ public abstract class AuthorDto {
 
         public static <K extends Data> SingleAuthor<? extends Data> fromEntity(Author author, Class<K> cls) {
             return new SingleAuthor<>(AuthorDto.fromEntity(author, cls));
+        }
+    }
+
+    @AllArgsConstructor
+    public static class SingleAuthorWithBooks<T extends Data> {
+        @Getter
+        private T author;
+
+        @Getter
+        private List<BookDto.Data> books;
+
+        public static <K extends Data> SingleAuthorWithBooks<? extends Data> fromEntity(Author author, List<Book> books, Class<K> cls) {
+            return new SingleAuthorWithBooks<>(AuthorDto.fromEntity(author, cls), BookDto.fromEntities(books, BookDto.Data.Compact.class));
         }
     }
 

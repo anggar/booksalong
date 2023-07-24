@@ -95,4 +95,12 @@ public abstract class BookDto {
     public static List<Data> fromEntities(List<Book> books) {
         return books.stream().map(Data.Complete::new).collect(Collectors.toList());
     }
+
+    public static List<Data> fromEntities(List<Book> books, Class<? extends Data> cls) {
+        if (cls == Data.Compact.class) {
+            return books.stream().map(Data.Compact::new).collect(Collectors.toList());
+        }
+
+        return books.stream().map(Data.Complete::new).collect(Collectors.toList());
+    }
 }

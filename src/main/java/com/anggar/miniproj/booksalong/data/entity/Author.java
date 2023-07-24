@@ -3,6 +3,7 @@ package com.anggar.miniproj.booksalong.data.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -19,5 +20,5 @@ public class Author extends BaseSingleEntity {
     @Getter
     @Setter
     @ManyToMany(mappedBy = "authors")
-    private Set<Book> books;
+    private List<Book> books;
 }
