@@ -30,6 +30,7 @@ public abstract class UserDto {
             @NotEmpty String username,
             @NotEmpty String email,
             @NotEmpty String password,
+            @NotEmpty String role,
             String bio
     ) {
         public User toEntity(PasswordEncoder passwordEncoder) {

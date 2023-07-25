@@ -38,6 +38,19 @@ public class WebSecurityConfiguration {
                                 "/authors/**",
                                 "/public/**"
                         ).permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/books/**",
+                                "/authors/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(
+                                HttpMethod.PUT,
+                                "/books/**"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(
+                                HttpMethod.DELETE,
+                                "/books/**"
+                        ).hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .build();

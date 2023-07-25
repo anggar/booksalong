@@ -18,7 +18,7 @@ import lombok.Setter;
 
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseSingleEntity extends BaseEntity {
+public class BaseSingleEntity extends BaseEntity {
 
     @Getter
     @Setter

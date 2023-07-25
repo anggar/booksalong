@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 public abstract class AuthorDto {
-     public sealed interface Data permits Data.Compact, Data.Complete, Data.CompleteWithBook {
+     public sealed interface Data permits Data.Compact, Data.Complete {
          record Compact (long id, String name) implements Data {
              public Compact(Author author) {
                  this(author.getId(), author.getName());
@@ -24,15 +24,6 @@ public abstract class AuthorDto {
                  this(author.getId(), author.getName(), author.getCreatedAt(), author.getUpdatedAt());
              }
          }
-         record CompleteWithBook (
-                 long id, String name, LocalDateTime createdAt, LocalDateTime updatedAt,
-                 List<BookDto.Data> books
-         ) implements Data {
-            public CompleteWithBook(Author author) {
-                this(author.getId(), author.getName(), author.getCreatedAt(), author.getUpdatedAt(),
-                        BookDto.fromEntities(author.getBooks(), BookDto.Data.Compact.class));
-            }
-        }
      }
 
     @AllArgsConstructor

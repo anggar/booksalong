@@ -43,7 +43,6 @@ public class TrackerController {
         var user = userService.currentUser(authUserDetails);
         var book = bookService.findById(body.bookId());
 
-
         var tracker = switch (body.actionState()) {
             case "wishlist" -> trackerService.upsertWishlist(book, user);
             case "trackPage" -> trackerService.trackPage(book, user, body.currentPage());

@@ -30,7 +30,6 @@ public class TrackerService {
                         case UNTRACKED -> savedTracker.setState(TrackingStateEnum.WISHLISTED);
                         case WISHLISTED -> savedTracker.setState(TrackingStateEnum.UNTRACKED);
                         default -> throw new IllegalStateException("Unexpected actionState transition to wishlist: " + savedTracker.getState());
-
                     }
 
                     savedTracker.setCurrentPage(0);
@@ -57,9 +56,11 @@ public class TrackerService {
         var tracker = trackerRepository.findById(new TrackerId(user.getId(), book.getId()))
                 .map(savedTracker -> {
                     switch (savedTracker.getState()) {
-                        case TRACKED, FINISHED -> savedTracker.setState(TrackingStateEnum.FINISHED);
+                        case TRACKED, FINISHED -> {
+                            savedTracker.setCurrentPage(book.getPageNumbers());
+                            savedTracker.setState(TrackingStateEnum.FINISHED);
+                        }
                         default -> throw new IllegalStateException("Unexpected actionState transition to finish: " + savedTracker.getState());
-
                     }
                     return savedTracker;
                 })
@@ -79,5 +80,4 @@ public class TrackerService {
 
         return trackerRepository.save(tracker);
     }
-
 }
