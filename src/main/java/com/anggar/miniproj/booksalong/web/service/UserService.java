@@ -1,7 +1,9 @@
 package com.anggar.miniproj.booksalong.web.service;
 
 import com.anggar.miniproj.booksalong.data.dto.UserDto;
+import com.anggar.miniproj.booksalong.data.entity.Role;
 import com.anggar.miniproj.booksalong.data.entity.User;
+import com.anggar.miniproj.booksalong.data.repository.RoleRepository;
 import com.anggar.miniproj.booksalong.data.repository.UserRepository;
 import com.anggar.miniproj.booksalong.security.AuthUserDetails;
 import com.anggar.miniproj.booksalong.web.exception.DuplicateDataException;
@@ -12,11 +14,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -35,6 +42,11 @@ public class UserService {
         });
 
         var user = body.toEntity(this.passwordEncoder);
+        roleRepository.findByName("ROLE_" + body.role().toUpperCase())
+                .ifPresentOrElse(
+                        role -> user.setRoles(Collections.singletonList(role)),
+                        () -> user.setRoles(Collections.singletonList(Role.builder().name("ROLE_USER").build())));
+
         return userRepository.save(user);
     }
 
