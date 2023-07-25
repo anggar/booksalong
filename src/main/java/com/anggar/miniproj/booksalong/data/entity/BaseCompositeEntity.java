@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 // make no assumption for ID column
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class BaseCompositeEntity {
+public class BaseCompositeEntity extends BaseEntity {
 
     @Getter
     @Setter
